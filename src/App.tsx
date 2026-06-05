@@ -4,8 +4,7 @@ import { ReactLenis, useLenis } from 'lenis/react'
 // lenis is used for smooth scrolling
 
 export default function App() {
-    const lenis = useLenis((lenis) => {
-    // called every scroll
+    useLenis((lenis) => {
     console.log(lenis)
   })
   return (

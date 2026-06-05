@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root,html,body
 {
   background-color: black;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
 *, *::before, *::after {
