@@ -9,7 +9,7 @@ export default function App() {
   })
   return (
     <>
-      <ReactLenis root />
+      <ReactLenis options={{syncTouch:true}} root />
     <div className="tabs-cover">
       <div className="component-tab-cover">
         <div className="component-tab">
