@@ -21,6 +21,21 @@ export default function App() {
           content
         </div>
       </div>
+      <div className="component-tab-cover">
+        <div className="component-tab">
+          content
+        </div>
+      </div>
+      <div className="component-tab-cover">
+        <div className="component-tab">
+          content
+        </div>
+      </div>
+      <div className="component-tab-cover">
+        <div className="component-tab">
+          content
+        </div>
+      </div>
     </div>
     </>
   );
