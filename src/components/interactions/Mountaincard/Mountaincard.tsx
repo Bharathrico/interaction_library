@@ -1,0 +1,175 @@
+import { Canvas, useLoader,useFrame } from "@react-three/fiber";
+import { EffectComposer } from "@react-three/postprocessing";
+import * as THREE from "three";
+import "./Mountaincard.css";
+import munnarimage from "./Munnarcard_image.png";
+import { useState, useRef} from "react";
+import VertexShader from './shaders/.vert?raw'
+import FragmentShader from './shaders/.frag?raw'
+
+const Treesvg = () => {
+  return (
+    <svg
+      style={{ height: "auto", width: "100%" }}
+      viewBox="0 0 26 46"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g style={{ mixBlendMode: "plus-lighter" }}>
+        <path d="M13 46L13 0" stroke="white" strokeWidth="4" />
+        <path
+          d="M13 0V1C13 8.1797 7.1797 14 0 14"
+          stroke="white"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 11V12C13 19.1797 7.1797 25 0 25"
+          stroke="white"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 24C13 31.1797 7.1797 37 0 37"
+          stroke="white"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 0V1C13 8.1797 18.8203 14 26 14"
+          stroke="white"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 11V12C13 19.1797 18.8203 25 26 25"
+          stroke="white"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 24C13 31.1797 18.8203 37 26 37"
+          stroke="white"
+          strokeWidth="4"
+        />
+      </g>
+    </svg>
+  );
+};
+
+const Mountainsvg = () => {
+  return (
+    <svg
+      style={{ height: "100%", width: "auto" }}
+      viewBox="0 0 29 27"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_152_767)">
+        <path d="M4.5 31L25.5 10L38.5 23" stroke="white" strokeWidth="2.32" />
+        <circle
+          cx="14.3538"
+          cy="7.35383"
+          r="4.35383"
+          stroke="white"
+          strokeWidth="2.32204"
+        />
+        <path d="M-3.5 22.5L5 14L13 22" stroke="white" strokeWidth="2.32" />
+      </g>
+      <defs>
+        <clipPath id="clip0_152_767">
+          <rect width="29" height="27" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+
+const myShader = {
+  uniforms: {
+    mousePos: { value: new THREE.Vector2(0.5, 0.5) },
+  },
+  vertexShader: VertexShader,
+  fragmentShader: FragmentShader
+};
+
+
+// a plane with shader
+type ShaderLayerProps = {
+  mousePos : THREE.Vector2
+}
+const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
+  const materialRef = useRef<THREE.ShaderMaterial | null >(null);
+
+   useFrame(() => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.mousePos.value = mousePos;
+    }
+  });
+
+  return(
+    <mesh>
+      <planeGeometry args={[1,1,1,1]}></planeGeometry>
+      <shaderMaterial ref={materialRef} args={[myShader]}/>
+    </mesh>
+  )
+}
+
+
+export default function Mountaincard() {
+
+  const [mousePos, setMousePos] = useState(new THREE.Vector2(0.5, 0.5));
+
+  const mouseOver = (e: { clientX: number; clientY: number; }) => {
+    const x = e.clientX / window.innerWidth;
+    const y = 1 - e.clientY / window.innerHeight;
+    console.log(x,y);
+    setMousePos(new THREE.Vector2(x, y));
+  };
+  const bgTexture = useLoader(THREE.TextureLoader, munnarimage);
+  return (
+    <div className="mountaincard" onMouseOver={mouseOver}>
+      <div className="herotext">
+        <div>
+          Kolukku{" "}
+          <span style={{height:"100%",maxWidth:"30%", width:"auto"}}>
+            <Mountainsvg />
+          </span>
+        </div>
+        <div>
+          <span style={{maxWidth:"45%", gap:"5%"}}>
+            <Treesvg />
+            <Treesvg />
+            <Treesvg />
+            <Treesvg />
+          </span>
+          Malai
+        </div>
+      </div>
+      <div className="subtext">
+        <div>Tue, 15 Sep</div>
+        <div>Munnar</div>
+      </div>
+      <Canvas
+        className="mountaincard-canvas"
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          top: "0",
+          left: "0",
+          background: "transparent",
+        }}
+        camera={{fov:11}}
+      >
+        <mesh position={[0, 0, 0]}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial map={bgTexture} />
+        </mesh>
+
+        <EffectComposer>
+          <ShaderLayer mousePos={mousePos}/>
+        </EffectComposer>
+
+        <ambientLight intensity={0.5} />
+      </Canvas>
+      {/* <img src="Munnar-card.png" alt="" /> */}
+    </div>
+  );
+}

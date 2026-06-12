@@ -1,0 +1,11 @@
+<svg width="26" height="46" viewBox="0 0 26 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g style="mix-blend-mode:plus-lighter">
+        <path d="M13 46L13 0" stroke="white" stroke-width="4" />
+        <path d="M13 0V1C13 8.1797 7.1797 14 0 14" stroke="white" stroke-width="4" />
+        <path d="M13 11V12C13 19.1797 7.1797 25 0 25" stroke="white" stroke-width="4" />
+        <path d="M13 24C13 31.1797 7.1797 37 0 37" stroke="white" stroke-width="4" />
+        <path d="M13 0V1C13 8.1797 18.8203 14 26 14" stroke="white" stroke-width="4" />
+        <path d="M13 11V12C13 19.1797 18.8203 25 26 25" stroke="white" stroke-width="4" />
+        <path d="M13 24C13 31.1797 18.8203 37 26 37" stroke="white" stroke-width="4" />
+    </g>
+</svg>

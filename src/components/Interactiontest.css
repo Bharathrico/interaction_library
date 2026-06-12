@@ -1,0 +1,83 @@
+.Testwrapper {
+  max-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden; 
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10%;
+}
+
+.component-wrapper {
+  width: 100%;
+  animation: componentanimation 0.7s cubic-bezier(.59,0,.25,.99);
+}
+
+@keyframes componentanimation {
+  0%{
+    opacity: 0;
+    filter: blur(50px);
+  }
+  100%
+  {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+/* Took these reference from here : https://www.w3schools.com/css/css_rwd_mediaqueries.asp */
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) and (orientation: portrait) {
+    .component-wrapper {
+      font-size: 4vmin;
+  max-width: 100%;
+}
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px){
+    .component-wrapper {
+    font-size: 2vmax;
+    max-width: 40vmax;
+    /* width: 100%; */
+  }
+}
+
+/* Medium devices (portrait tablets, 768px and up) */
+@media only screen and (min-width: 768px){
+  .component-wrapper {
+    font-size: 2vmax;
+    max-width: 40vmax;
+    /* width: 100%; */
+  }
+}
+
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) and (orientation: landscape) {
+  .component-wrapper {
+    font-size: 1.2vmax;
+    max-width: 25vmax;
+    /* width: 100%; */
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) and (orientation: landscape) {
+.component-wrapper {
+  font-size: 1vmax;
+    max-width: 20vmax;
+    /* width: 100%; */
+  }}
+
+@media only screen and (min-width: 1600px) and (orientation: landscape) {
+.component-wrapper {
+  font-size: 0.7vmax;
+    max-width: 15vmax;
+    /* width: 100%; */
+  }
+}
