@@ -106,7 +106,7 @@ const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
   return(
     <mesh>
       <planeGeometry args={[1,1,1,1]}></planeGeometry>
-      <shaderMaterial ref={materialRef} args={[myShader]}/>
+      <shaderMaterial transparent ref={materialRef} args={[myShader]}/>
     </mesh>
   )
 }
@@ -114,17 +114,49 @@ const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
 
 export default function Mountaincard() {
 
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const [mousePos, setMousePos] = useState(new THREE.Vector2(0.5, 0.5));
 
-  const mouseOver = (e: { clientX: number; clientY: number; }) => {
-    const x = e.clientX / window.innerWidth;
-    const y = 1 - e.clientY / window.innerHeight;
+  const mouseMove = (e: { clientX: number; clientY: number; }) => {
+    if(
+      cardRef.current?.getBoundingClientRect() &&
+      e.clientX < cardRef.current?.getBoundingClientRect().right &&
+      e.clientX > cardRef.current?.getBoundingClientRect().left &&
+      e.clientY < cardRef.current?.getBoundingClientRect().bottom &&
+      e.clientY > cardRef.current?.getBoundingClientRect().top)
+      {
+        const clickPosX = e.clientX-cardRef.current?.getBoundingClientRect().left;
+    const clickPosY = e.clientY-cardRef.current?.getBoundingClientRect().top;
+    const x = clickPosX/ (cardRef.current?.getBoundingClientRect().right-cardRef.current?.getBoundingClientRect().left);
+    const y = 1 - clickPosY / (cardRef.current?.getBoundingClientRect().bottom-cardRef.current?.getBoundingClientRect().top);
     console.log(x,y);
     setMousePos(new THREE.Vector2(x, y));
+    }
   };
+
+  const touchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if(e.changedTouches )
+    {
+    const touch = e.changedTouches[0];
+    if(
+      cardRef.current?.getBoundingClientRect() &&
+      touch.clientX < cardRef.current?.getBoundingClientRect().right &&
+      touch.clientX > cardRef.current?.getBoundingClientRect().left &&
+      touch.clientY < cardRef.current?.getBoundingClientRect().bottom &&
+      touch.clientY > cardRef.current?.getBoundingClientRect().top)
+    {
+    const touchPosX = touch.clientX-cardRef.current?.getBoundingClientRect().left;
+    const touchPosY = touch.clientY-cardRef.current?.getBoundingClientRect().top;
+    const x = touchPosX/ (cardRef.current?.getBoundingClientRect().right-cardRef.current?.getBoundingClientRect().left);
+    const y = 1 - touchPosY / (cardRef.current?.getBoundingClientRect().bottom-cardRef.current?.getBoundingClientRect().top);
+    console.log(x,y);
+    setMousePos(new THREE.Vector2(x, y));
+    }
+  }
+}
   const bgTexture = useLoader(THREE.TextureLoader, munnarimage);
   return (
-    <div className="mountaincard" onMouseOver={mouseOver}>
+    <div ref={cardRef} className="mountaincard" onMouseMove={mouseMove} onTouchMove={touchMove}>
       <div className="herotext">
         <div>
           Kolukku{" "}

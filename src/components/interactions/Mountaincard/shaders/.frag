@@ -21,10 +21,10 @@ struct ColorStop{
         bool isInterpolating = currentColor.position <= factor && factor <= nextColor.position; \
         index = isInterpolating ? i : index; \
     } \
-     ColorStop currentColor = colors[index]; \
-     ColorStop nextColor = colors[index+1]; \
-     float range = nextColor.position - currentColor.position; \
-     float lerpFactor = (factor - currentColor.position)/range; \
+    ColorStop currentColor = colors[index]; \
+    ColorStop nextColor = colors[index+1]; \
+    float range = nextColor.position - currentColor.position; \
+    float lerpFactor = (factor - currentColor.position)/range; \
     finalColor = mix(currentColor.color, nextColor.color, lerpFactor); \
 } \
 
@@ -38,5 +38,7 @@ void main()
 
     vec3 finalColor;
     ColorRamp(colors, vUv.y, finalColor);
-    gl_FragColor = vec4(finalColor,vUv.y);
+    vec2 uv = vUv;
+    uv -= mousePos;
+    gl_FragColor = vec4(vec3(length(uv)),1.0);
 }
