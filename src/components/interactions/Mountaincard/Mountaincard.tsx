@@ -1,5 +1,5 @@
 import { Canvas, useLoader,useFrame } from "@react-three/fiber";
-import { EffectComposer } from "@react-three/postprocessing";
+import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import "./Mountaincard.css";
 import munnarimage from "./Munnarcard_image.png";
@@ -81,31 +81,36 @@ const Mountainsvg = () => {
 };
 
 
-const myShader = {
-  uniforms: {
-    mousePos: { value: new THREE.Vector2(0.5, 0.5) },
-  },
-  vertexShader: VertexShader,
-  fragmentShader: FragmentShader
-};
+
 
 
 // a plane with shader
 type ShaderLayerProps = {
-  mousePos : THREE.Vector2
+  mousePos : THREE.Vector2,
 }
 const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
+
+  const myShader = {
+  uniforms: {
+    uTime : {value:0},
+    mousePos: { value: new THREE.Vector2(0.5, 0.5) },
+    imageTexture : {value: useLoader(THREE.TextureLoader, munnarimage)}
+  },
+  vertexShader: VertexShader,
+  fragmentShader: FragmentShader
+};
   const materialRef = useRef<THREE.ShaderMaterial | null >(null);
 
-   useFrame(() => {
+   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.mousePos.value = mousePos;
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     }
   });
 
   return(
     <mesh>
-      <planeGeometry args={[1,1,1,1]}></planeGeometry>
+      <planeGeometry args={[1,1,100,100]}></planeGeometry>
       <shaderMaterial transparent ref={materialRef} args={[myShader]}/>
     </mesh>
   )
@@ -186,7 +191,9 @@ export default function Mountaincard() {
           height: "100%",
           top: "0",
           left: "0",
+          // borderRadius: "20%",
           background: "transparent",
+          boxShadow: " inset 0 0 10px 10px rgb(255, 255, 255) "
         }}
         camera={{fov:11}}
       >
@@ -196,7 +203,10 @@ export default function Mountaincard() {
         </mesh>
 
         <EffectComposer>
+          
           <ShaderLayer mousePos={mousePos}/>
+          <DotScreen scale={0.5}/>
+          <Bloom/>
         </EffectComposer>
 
         <ambientLight intensity={0.5} />

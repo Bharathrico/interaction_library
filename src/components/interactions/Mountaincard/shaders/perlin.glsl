@@ -1,13 +1,3 @@
-uniform float uTime;
-
-#define PI 3.14159265
-
-varying vec3 vPosition;
-varying float vDisplacement;
-//more like uvu
-varying vec2 vUv;
-varying vec3 vNormal;
-
 //	Classic Perlin 3D Noise 
 //	by Stefan Gustavson
 //
@@ -81,51 +71,4 @@ float noise(vec3 P){
   vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
   float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
   return 2.2 * n_xyz;
-}
-//perlin noise ends
-
-// Map function for GLSL
-float map(float value, float min1, float max1, float min2, float max2) {
-  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-}
-
-//smooth mod function
-float smoothMod(float axis, float amp, float rad)
-{
-    float top =  cos(PI * (axis / amp)) * sin( PI * (axis / amp));
-    float bottom = pow(sin(PI * (axis / amp)),2.0) + pow(rad, 2.0);
-    float at = atan(top/bottom);
-    return amp * (1.0/2.0) - (1.0/PI) * at;
-}
-
-//fit function
-float fit(float unscaled, float originalMin, float originalMax, float minAllowed, float maxAllowed)
-{
-    return (maxAllowed-minAllowed) * (unscaled-originalMin)/(originalMax - originalMin) + minAllowed;
-}
-
-//wave function 
-float wave(vec3 position)
-{
-    return fit(smoothMod(position.y*6.0,1.0,1.5),0.35,0.6,0.0,1.0);
-}
-
-
-void main() {
-    
-
-    vec3 coords = position;
-    coords.z+=uTime/10.0;
-    coords += noise(coords/0.9);
-    float adjustedPattern = wave(coords);
-    vDisplacement = adjustedPattern;
-
-
-    // varyings
-    vPosition = position;
-    vNormal = normal;
-    vUv = uv;
-
-    vec3 newPosition = position + position * vDisplacement;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(vec3(position.x,position.y,newPosition.z/0.1), 1.0);
 }
