@@ -1,4 +1,4 @@
-precision lowp float;
+precision highp float;
 
 #define PI 3.14159265
 
@@ -9,10 +9,6 @@ struct ColorStop{
     float position;
 };
 
-struct MouseTrack{
-    vec2 position;
-    float time;
-};
 
 
 
@@ -49,44 +45,6 @@ varying float vDisplacement;
 uniform vec2 mousePos;
 uniform float uTime;
 uniform bool hovering;
-
-
-MouseTrack[MAX_POINTS] track = MouseTrack[](
-    MouseTrack(vec2(0),0.0),
-    MouseTrack(vec2(0),0.0),
-    MouseTrack(vec2(0),0.0),
-    MouseTrack(vec2(0),0.0),
-    MouseTrack(vec2(0),0.0),
-    MouseTrack(vec2(0),0.0)
-);
-
-int trackindex = 0;
-
-void addTrack(vec2 p)
-{
-    if(trackindex<MAX_POINTS)
-    {   
-        if(trackindex>0)
-        {
-        if(uTime-track[trackindex-1].time>2.0)
-        {
-        track[trackindex].position = p;
-        track[trackindex].time = uTime;
-        trackindex++;
-        }
-        }
-        else if(trackindex==0)
-        {
-        track[trackindex].position = p;
-        track[trackindex].time = uTime;
-        trackindex++;
-        }
-    }
-    else
-    {
-        trackindex=0;
-    }
-}
 
 //	Classic Perlin 3D Noise 
 //	by Stefan Gustavson
@@ -190,6 +148,22 @@ float wave(vec3 position)
     return fit(smoothMod(position.y*6.0,1.0,1.5),0.35,0.6,0.0,1.0);
 }
 
+//right now it renders dots and use that as mask to render the final image
+vec4 dots(vec3 fg) {
+  float count = 80.0;
+  vec2 gvr = fract(vUv * count) - 0.5;
+  vec2 gvb = vec2(gvr.x-0.1,gvr.y-0.1);
+  vec2 gvg = vec2(gvr.x+0.1,gvr.y+0.1);
+  gvr = vec2(gvr.x-0.2,gvr.y-0.2);
+  float dr = length(gvr);
+  float db = length(gvb);
+  float dg = length(gvg);
+  float dotr = 1.0 - smoothstep(0.3, 0.4, dr);
+  float dotg = 1.0 - smoothstep(0.3, 0.4, dg);
+  float dotb = 1.0 - smoothstep(0.3, 0.4, db);
+  vec3 bg = vec3(0.0, 0.0, 0.0);
+  return vec4(fg*vec3(dotr,dotg,dotb), 1.0);
+}
 
 void main()
 {   
@@ -198,31 +172,21 @@ void main()
         ColorStop(vec3(0.220, 0.486, 0.984),0.5),
         ColorStop(vec3(0.0, 0.0, 0.0),1.0)
     );
-     vec3 coords = vPosition;
+     vec3 coords = vPosition*2.0;
     coords.z+=uTime/10.0;
     coords += noise(coords);
     if(hovering)
-    {
-    addTrack(mousePos);
-    }
-    for(int i=0;i<MAX_POINTS;i++)
     {   
-       if(trackindex>0)
-       {
-       if((uTime-track[i].time)<6.0)
-       {
-        coords *= vec3(length(vUv-track[i].position));
-        }
-        else
-        {
-            coords *= vec3(1.0);
-        }   
-        }
+     coords *= vec3(distance(vUv,mousePos));
     }
     
     float adjustedPattern = wave(coords);
     vec3 finalColor;
     ColorRamp(colors, adjustedPattern, finalColor);
-    gl_FragColor = vec4(finalColor,1.0  );
+    // finalColor.rgb += 0.5;
+    // finalColor.rgb = (finalColor.rgb - 0.5) * 2.0 -0.3;
+    // finalColor.rgb = clamp(finalColor.rgb, 0.0, 1.0);
+    gl_FragColor = dots(finalColor);
+    // gl_FragColor = vec4(finalColor,1.0) ;
 }
 
