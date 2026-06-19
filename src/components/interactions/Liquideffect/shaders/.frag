@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 
 #define PI 3.14159265
 
@@ -20,8 +20,6 @@ uniform sampler2D imageTexture;
 
 void main()
 {   
-
-    // Displacement technique adapted from - https://www.shadertoy.com/view/Xsd3DB
     vec2 q = vUv;
     // blob code
     // gl_FragColor = vec4(texture2D(uBuffer,vUv).xyz,1.0);
@@ -40,9 +38,23 @@ void main()
     vec3 light = normalize(vec3(.2,-.5,.7));
     float diffuse = dot(grad,light);
     float spec = pow(max(0.,-reflect(light,grad).z),32.);
-    gl_FragColor = mix(c,vec4(.7,.8,1.,1.),.25)*max(diffuse,0.) + spec;
+    vec4 finalColor = mix(c,vec4(0.9647, 0.9765, 1.0, 1.0),.25)*max(diffuse,0.) + spec ;
+    //brightness
+    finalColor.rgb += 0.5;
+    //contrast
+    finalColor.rgb = (finalColor.rgb - 0.5) * 1.7 -0.3;
+    gl_FragColor = finalColor;
 
+    
+    // vec2 q = vUv;
 
+    // float h = texture2D(uBuffer, q).x;
+    // float sh = 1.35 - h*2.;
+    // vec3 c =
+    //    vec3(exp(pow(sh-.75,2.)*-10.),
+    //         exp(pow(sh-.50,2.)*-20.),
+    //         exp(pow(sh-.25,2.)*-10.));
+    // gl_FragColor = vec4(c,1.);
 
 }
 

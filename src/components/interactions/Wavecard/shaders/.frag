@@ -183,7 +183,9 @@ void main()
     float adjustedPattern = wave(coords);
     vec3 finalColor;
     ColorRamp(colors, adjustedPattern, finalColor);
+    //brightness
     // finalColor.rgb += 0.5;
+    //contrast
     // finalColor.rgb = (finalColor.rgb - 0.5) * 2.0 -0.3;
     // finalColor.rgb = clamp(finalColor.rgb, 0.0, 1.0);
     gl_FragColor = dots(finalColor);

@@ -3,7 +3,7 @@
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 // import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
-import "./Rippleeffect.css";
+import "./Liquideffect.css";
 import { useState, useRef, useEffect, useMemo } from "react";
 import VertexShader from "./shaders/.vert?raw";
 import FragmentShader from "./shaders/.frag?raw";
@@ -65,11 +65,15 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
   }, [bufferScene, bufferMaterial]);
   useFrame((state) => {
 
+    if(hovering)
+    {
+      navigator.vibrate([10]);
+    }
+
+
     const read = frameRef.current ? fbocopy : fbomain
     const write = frameRef.current ? fbomain : fbocopy
     
-    
-   
 
     bufferMaterial.uniforms.uBuffer.value = read.texture;
     bufferMaterial.uniforms.mousePos.value = mousePos;
@@ -222,7 +226,6 @@ export default function Wavecard() {
       id="ripplecard"
       className="maincard"
       onMouseMove={mouseMove}
-      onTouchStart={touchMove}
       onTouchMove={touchMove}
       onTouchEnd={() => setHovering(false)}
       onMouseDown={() => setHovering(true)}
