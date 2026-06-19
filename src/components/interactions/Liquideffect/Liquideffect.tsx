@@ -25,6 +25,8 @@ type ShaderLayerProps = {
   resolution: number;
 };
 
+
+// creates two frames, swaps between them keep loop of previous frame data
 function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
   const fbomain = useFBO(resolution, resolution);
   const fbocopy = useFBO(resolution,resolution);

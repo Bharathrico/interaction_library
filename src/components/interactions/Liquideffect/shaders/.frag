@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 #define PI 3.14159265
 
@@ -45,16 +45,6 @@ void main()
     finalColor.rgb = (finalColor.rgb - 0.5) * 1.7 -0.3;
     gl_FragColor = finalColor;
 
-    
-    // vec2 q = vUv;
-
-    // float h = texture2D(uBuffer, q).x;
-    // float sh = 1.35 - h*2.;
-    // vec3 c =
-    //    vec3(exp(pow(sh-.75,2.)*-10.),
-    //         exp(pow(sh-.50,2.)*-20.),
-    //         exp(pow(sh-.25,2.)*-10.));
-    // gl_FragColor = vec4(c,1.);
-
+  
 }
 
