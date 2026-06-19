@@ -29,7 +29,7 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
   const fbocopy = useFBO(resolution,resolution);
   const { gl } = useThree();
   const frameRef = useRef(false);
-  const frameCount = useRef(0); 
+  const frameCount = useRef(0.0); 
 
   const bufferScene = useMemo(() => new THREE.Scene(), []);
   const bufferCamera = useMemo(
@@ -68,22 +68,21 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
     const write = frameRef.current ? fbomain : fbocopy
     
     
-    
-    
+    gl.setRenderTarget(write);
+    gl.render(bufferScene, bufferCamera);
+
     bufferMaterial.uniforms.uBuffer.value = read.texture;
     bufferMaterial.uniforms.mousePos.value = mousePos;
     bufferMaterial.uniforms.resolution.value = resolution;
     bufferMaterial.uniforms.hovering.value = hovering;
     bufferMaterial.uniforms.uTime.value = state.clock.elapsedTime;
    
-    console.log(frameCount.current%3);
+    console.log(frameCount.current);
     bufferMaterial.uniforms.uFrame.value = frameCount.current;
 
     frameCount.current+=1.0;
 
     frameRef.current = !frameRef.current;
-    gl.setRenderTarget(write);
-    gl.render(bufferScene, bufferCamera);
     gl.setRenderTarget(null);
 
 

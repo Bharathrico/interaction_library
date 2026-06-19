@@ -35,7 +35,7 @@ void main()
     //blob buffer code ends
 
     vec3 e = vec3(vec2(1.)/vec2(resolution),0.);
-    vec2 q = vUv;
+    vec2 q = gl_FragCoord.xy/vec2(resolution);
     vec4 c = texture2D(uBuffer, q);
     
 
@@ -65,10 +65,10 @@ void main()
 //    }
 
     // The actual propagation:
-    d += -(p11-.5)*2. + (p10 + p01 + p21 + p12 - 2.);
-    d *= .99; // dampening
-    d *= min(1.,float(uFrame)); // clear the buffer at iFrame == 0
-    d = d*.5 + .5;
+    // d += -(p11-.5)*2. + (p10 + p01 + p21 + p12 - 2.);
+    // d *= .99; // dampening
+    // d *= min(1.,float(uFrame)); // clear the buffer at iFrame == 0
+    // d = d*.5 + .5;
 
-    gl_FragColor = vec4(d,0,0,0);
+    gl_FragColor = vec4(d,0,0,1);
 }

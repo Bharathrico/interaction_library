@@ -1,11 +1,11 @@
 //glass shader mostly based on this tutorial - https://blog.olivierlarose.com/tutorials/3d-glass-effect
 
-import { Canvas, useFrame, useLoader, type ThreeElements } from "@react-three/fiber";
-import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
+import { Canvas, useFrame, type ThreeElements } from "@react-three/fiber";
+// import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import "./Wavecard.css";
 import { useState, useRef, useEffect } from "react";
-import scratchImage from "./scratch.jpg";
+// import scratchImage from "./scratch.jpg";
 import VertexShader from "./shaders/.vert?raw";
 import FragmentShader from "./shaders/.frag?raw";
 import {
@@ -47,10 +47,10 @@ const ShaderLayer = ({ mousePos, hovering }: ShaderLayerProps) => {
     <mesh>
       <Plane args={[1, 1]}>
         <shaderMaterial
-          onBeforeCompile={(shader)=>{
-             console.log("exec");
+          // onBeforeCompile={(shader)=>{
+            //  console.log("exec");
             //  shader.fragmentShader = shader.fragmentShader.replace('gl_FragColor = vec4(finalColor,1.0) ;','gl_FragColor = vec4(1,1,0,1) ;')
-          }}
+          // }}
           depthWrite={false}
           ref={materialRef}
           args={[myShader]}
