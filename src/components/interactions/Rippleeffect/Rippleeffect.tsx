@@ -25,22 +25,8 @@ type ShaderLayerProps = {
 };
 
 function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
-  const fbo = useFBO(resolution, resolution, {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat,
-    type: THREE.UnsignedByteType,
-    depthBuffer: false,
-    stencilBuffer: false,
-  });
-  const fbo2 = useFBO(resolution,resolution, {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat,
-    type: THREE.UnsignedByteType,
-    depthBuffer: false,
-    stencilBuffer: false,
-  });
+  const fbomain = useFBO(resolution, resolution);
+  const fbocopy = useFBO(resolution,resolution);
   const { gl } = useThree();
   const frameRef = useRef(false);
   const frameCount = useRef(0); 
@@ -63,29 +49,26 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
           resolution: {
             value: resolution
           },
-          uBuffer:{value:fbo2.texture},
+          uBuffer:{value:null},
           uFrame : {value:0.0}
         },
         vertexShader: BufferVertexShader,
         fragmentShader: BufferFragmentShader,
       }),
-    [resolution,hovering,mousePos,fbo2.texture],
+    [resolution,hovering,mousePos],
   );
 
   useMemo(() => {
     const quad = new THREE.Mesh(new THREE.PlaneGeometry(2,2), bufferMaterial);
     bufferScene.add(quad);
   }, [bufferScene, bufferMaterial]);
-
   useFrame((state) => {
 
-    const read = frameRef.current ? fbo2 : fbo
-    const write = frameRef.current ? fbo : fbo2
+    const read = frameRef.current ? fbocopy : fbomain
+    const write = frameRef.current ? fbomain : fbocopy
     
-    gl.setRenderTarget(write);
-    gl.clear();
-    gl.render(bufferScene, bufferCamera);
-    gl.setRenderTarget(null);
+    
+    
     
     bufferMaterial.uniforms.uBuffer.value = read.texture;
     bufferMaterial.uniforms.mousePos.value = mousePos;
@@ -93,17 +76,20 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
     bufferMaterial.uniforms.hovering.value = hovering;
     bufferMaterial.uniforms.uTime.value = state.clock.elapsedTime;
    
-    console.log(frameCount.current);
-    bufferMaterial.uniforms.uFrame.value = frameCount.current%2;
+    console.log(frameCount.current%3);
+    bufferMaterial.uniforms.uFrame.value = frameCount.current;
 
     frameCount.current+=1.0;
 
     frameRef.current = !frameRef.current;
+    gl.setRenderTarget(write);
+    gl.render(bufferScene, bufferCamera);
+    gl.setRenderTarget(null);
 
 
   });    
 
-  return {renderTarget:frameRef.current?fbo2:fbo};
+  return {renderTarget:fbomain};
 }
 
 const ShaderLayer = ({ mousePos, hovering, resolution }: ShaderLayerProps) => {

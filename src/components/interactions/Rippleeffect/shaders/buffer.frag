@@ -23,7 +23,52 @@ uniform float uFrame;
 
 void main()
 {   
-    vec3 blob = vec3(.11-clamp(length(vUv-mousePos),0.,.11))*2.;
-    vec3 stack= texture2D(uBuffer,vUv).xyz * vec3(0.99,.982,.93);
-     gl_FragColor = vec4(stack+blob,1);
+    // blob buffer code
+    // vec3 blob = vec3(0);
+    // if(hovering)
+    // {
+    //   blob = vec3(.11-clamp(length(vUv-mousePos),0.,.11));
+    // }
+    
+    // vec3 stack= texture2D(uBuffer,vUv).xyz * vec3(0.9294, 0.9882, 0.9412);
+    //  gl_FragColor = vec4(stack+blob,1);
+    //blob buffer code ends
+
+    vec3 e = vec3(vec2(1.)/vec2(resolution),0.);
+    vec2 q = vUv;
+    vec4 c = texture2D(uBuffer, q);
+    
+
+    float p11 = c.x;
+   
+    float p10 = texture2D(uBuffer, q-e.zy).x;
+    float p01 = texture2D(uBuffer, q-e.xz).x;
+    float p21 = texture2D(uBuffer, q+e.xz).x;
+    float p12 = texture2D(uBuffer, q+e.zy).x;
+
+
+    float d = 0.;
+
+
+    if (hovering) 
+   {
+    //   Mouse interaction:
+      d = smoothstep(.011,.01,length(mousePos - q));
+   }
+//     else
+//    {
+    //   Simulate rain drops
+//       float t = uTime*2.;
+//       vec2 pos = fract(floor(t)*vec2(0.456665,0.708618))*vec2(resolution);
+//       float amp = 1.-step(.05,fract(t));
+//       d = -amp*smoothstep(2.5,.5,length(pos - q));
+//    }
+
+    // The actual propagation:
+    d += -(p11-.5)*2. + (p10 + p01 + p21 + p12 - 2.);
+    d *= .99; // dampening
+    d *= min(1.,float(uFrame)); // clear the buffer at iFrame == 0
+    d = d*.5 + .5;
+
+    gl_FragColor = vec4(d,0,0,0);
 }

@@ -165,7 +165,7 @@ export default function Mountaincard() {
       <div className="herotext">
         <div>
           Kolukku{" "}
-          <span style={{height:"100%",maxWidth:"30%", width:"auto"}}>
+          <span style={{height:"100%",maxWidth:"30%", width:"auto",minWidth:"10%"}}>
             <Mountainsvg />
           </span>
         </div>
