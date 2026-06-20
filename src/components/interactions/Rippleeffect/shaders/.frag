@@ -1,4 +1,4 @@
-precision highp float;
+precision lowp float;
 
 #define PI 3.14159265
 
@@ -40,9 +40,12 @@ void main()
     vec3 light = normalize(vec3(.2,-.5,.7));
     float diffuse = dot(grad,light);
     float spec = pow(max(0.,-reflect(light,grad).z),32.);
-    gl_FragColor = mix(c,vec4(.7,.8,1.,1.),.25)*max(diffuse,0.) + spec;
-
-
+    vec4 finalColor = mix(c,vec4(0.9647, 0.9765, 1.0, 1.0),.25)*max(diffuse,0.) + spec ;
+    //brightness
+    finalColor.rgb += 0.5;
+    //contrast
+    finalColor.rgb = (finalColor.rgb - 0.5) * 1.7 -0.3;
+    gl_FragColor = finalColor;
 
 }
 

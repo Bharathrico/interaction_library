@@ -3,7 +3,7 @@
 //
 // https://www.shadertoy.com/view/4dK3Ww
 
-precision highp float;
+precision lowp float;
 
 #define PI 3.14159265
 
@@ -18,22 +18,38 @@ uniform vec2 mousePos;
 uniform float uTime;
 uniform bool hovering;
 uniform float resolution;
-uniform sampler2D uBuffer;
-uniform sampler2D imageTexture;
+uniform sampler2D uBufferA;
+uniform sampler2D uBufferB;
 uniform float uFrame;
 
 void main()
 {   
-    // blob buffer code
+
+    vec3 e = vec3(vec2(1.)/vec2(resolution),0.);
+   vec2 q = vUv;
+   
+   vec4 c = texture2D(uBufferA, q);
+
+    float p11=c.y;
+    
+    float p10 = texture2D(uBufferA, q-e.zy).x;
+    float p01 = texture2D(uBufferA, q-e.xz).x;
+    float p21 = texture2D(uBufferA, q+e.xz).x;
+    float p12 = texture2D(uBufferA, q+e.zy).x;
+
+
     float blob = 0.0;
     if(hovering)
     {
-      blob = smoothstep(0.1,.05,length(mousePos-vUv));
+      blob = smoothstep(0.05,.01,length(mousePos-vUv));
     }
     
-    vec3 stack= texture2D(uBuffer,vUv).xyz * vec3(0.99,.982,.93);
-    float d = (stack.x+blob);
-    d *= 0.96;
-     gl_FragColor = vec4(d,0,0,1);
+    // vec3 stack= texture2D(uBufferA,vUv).xyz * vec3(0.99,.982,.93);
+    float d = blob  ;
+    d +=-(p11-.5)*2.0+(p10 + p01 + p21 + p12 - 2.);
+    d *= 0.97;
+    d *= min(1.,float(uFrame));
+    d = d*.5 + .5;
+     gl_FragColor = vec4(d,c.x,0,0);
     
 }

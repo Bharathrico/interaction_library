@@ -18,6 +18,81 @@ import {
 import backgroundImage from "./image.jpg"
 import { useGSAP } from "@gsap/react"; // <-- import the hook from our React package
 
+
+const Treesvg = () => {
+  return (
+    <svg
+      style={{ height: "auto", width: "100%" }}
+      viewBox="0 0 26 46"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g style={{ mixBlendMode: "plus-lighter" }}>
+        <path d="M13 46L13 0" stroke="gray" strokeWidth="4" />
+        <path
+          d="M13 0V1C13 8.1797 7.1797 14 0 14"
+          stroke="gray"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 11V12C13 19.1797 7.1797 25 0 25"
+          stroke="gray"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 24C13 31.1797 7.1797 37 0 37"
+          stroke="gray"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 0V1C13 8.1797 18.8203 14 26 14"
+          stroke="gray"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 11V12C13 19.1797 18.8203 25 26 25"
+          stroke="gray"
+          strokeWidth="4"
+        />
+        <path
+          d="M13 24C13 31.1797 18.8203 37 26 37"
+          stroke="gray"
+          strokeWidth="4"
+        />
+      </g>
+    </svg>
+  );
+};
+
+const Mountainsvg = () => {
+  return (
+    <svg
+      style={{ height: "100%", width: "auto" }}
+      viewBox="0 0 29 27"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_152_767)">
+        <path d="M4.5 31L25.5 10L38.5 23" stroke="gray" strokeWidth="2.32" />
+        <circle
+          cx="14.3538"
+          cy="7.35383"
+          r="4.35383"
+          stroke="gray"
+          strokeWidth="2.32204"
+        />
+        <path d="M-3.5 22.5L5 14L13 22" stroke="gray" strokeWidth="2.32" />
+      </g>
+      <defs>
+        <clipPath id="clip0_152_767">
+          <rect width="29" height="27" fill="gray" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+
 // a plane with shader
 type ShaderLayerProps = {
   mousePos: THREE.Vector2;
@@ -26,8 +101,14 @@ type ShaderLayerProps = {
 };
 
 function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
-  const fbomain = useFBO(resolution, resolution);
-  const fbocopy = useFBO(resolution,resolution);
+  const fbomain = useFBO(128, 128, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter
+  });
+  const fbocopy = useFBO(128,128,  {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter
+  });
   const { gl } = useThree();
   const frameRef = useRef(false);
   const frameCount = useRef(0.0); 
@@ -48,15 +129,16 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
           mousePos: { value: mousePos },
           hovering: { value: hovering },
           resolution: {
-            value: resolution
+            value: 128
           },
-          uBuffer:{value:null},
+          uBufferA:{value:null},
+          uBufferB:{value:null},
           uFrame : {value:0.0}
         },
         vertexShader: BufferVertexShader,
         fragmentShader: BufferFragmentShader,
       }),
-    [resolution,hovering,mousePos],
+    [hovering,mousePos],
   );
 
   useMemo(() => {
@@ -68,12 +150,10 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
     const read = frameRef.current ? fbocopy : fbomain
     const write = frameRef.current ? fbomain : fbocopy
     
-    
-   
-
-    bufferMaterial.uniforms.uBuffer.value = read.texture;
+    bufferMaterial.uniforms.uBufferA.value = read.texture;
+    // bufferMaterial.uniforms.uBufferB.value = write.texture;
     bufferMaterial.uniforms.mousePos.value = mousePos;
-    bufferMaterial.uniforms.resolution.value = resolution;
+    bufferMaterial.uniforms.resolution.value = 128;
     bufferMaterial.uniforms.hovering.value = hovering;
     bufferMaterial.uniforms.uTime.value = state.clock.elapsedTime;
    
@@ -229,6 +309,23 @@ export default function Wavecard() {
       onMouseUp={() => setHovering(false)}
       onMouseOut={() => setHovering(false)}
     >
+      <div className="herotext">
+        <div>
+          Kolukku{" "}
+          <span style={{height:"100%",maxWidth:"30%", width:"auto",minWidth:"10%"}}>
+            <Mountainsvg />
+          </span>
+        </div>
+        <div>
+          <span style={{maxWidth:"45%", gap:"5%"}}>
+            <Treesvg />
+            <Treesvg />
+            <Treesvg />
+            <Treesvg />
+          </span>
+          Malai
+        </div>
+      </div>
       <Canvas
         className="mountaincard-canvas"
         style={{
