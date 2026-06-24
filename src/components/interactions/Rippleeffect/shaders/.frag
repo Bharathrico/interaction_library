@@ -40,7 +40,7 @@ void main()
     vec3 light = normalize(vec3(.2,-.5,.7));
     float diffuse = dot(grad,light);
     float spec = pow(max(0.,-reflect(light,grad).z),32.);
-    vec4 finalColor = mix(c,vec4(0.9647, 0.9765, 1.0, 1.0),.25)*max(diffuse,0.) + spec ;
+    vec4 finalColor = mix(c,vec4(0.7608, 0.8039, 0.8863, 1.0),.25)*max(diffuse,0.) + spec ;
     //brightness
     finalColor.rgb += 0.5;
     //contrast

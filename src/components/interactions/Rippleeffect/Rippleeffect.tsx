@@ -22,7 +22,7 @@ import { useGSAP } from "@gsap/react"; // <-- import the hook from our React pac
 const Treesvg = () => {
   return (
     <svg
-      style={{ height: "auto", width: "100%" }}
+      style={{ height: "auto", width: "100%",  userSelect:"none" }}
       viewBox="0 0 26 46"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +67,7 @@ const Treesvg = () => {
 const Mountainsvg = () => {
   return (
     <svg
-      style={{ height: "100%", width: "auto" }}
+      style={{ height: "100%", width: "auto", userSelect:"none" }}
       viewBox="0 0 29 27"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -101,13 +101,17 @@ type ShaderLayerProps = {
 };
 
 function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
-  const fbomain = useFBO(128, 128, {
+  const fbomain = useFBO(resolution, resolution, {
     minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter
+    magFilter: THREE.LinearFilter,
+    stencilBuffer:false,
+    depthBuffer:false,
   });
-  const fbocopy = useFBO(128,128,  {
+  const fbocopy = useFBO(resolution,resolution,  {
     minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter
+    magFilter: THREE.LinearFilter,
+    depthBuffer:false,
+    stencilBuffer:false
   });
   const { gl } = useThree();
   const frameRef = useRef(false);
@@ -129,7 +133,7 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
           mousePos: { value: mousePos },
           hovering: { value: hovering },
           resolution: {
-            value: 128
+            value: resolution
           },
           uBufferA:{value:null},
           uBufferB:{value:null},
@@ -153,7 +157,7 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
     bufferMaterial.uniforms.uBufferA.value = read.texture;
     // bufferMaterial.uniforms.uBufferB.value = write.texture;
     bufferMaterial.uniforms.mousePos.value = mousePos;
-    bufferMaterial.uniforms.resolution.value = 128;
+    bufferMaterial.uniforms.resolution.value = resolution;
     bufferMaterial.uniforms.hovering.value = hovering;
     bufferMaterial.uniforms.uTime.value = state.clock.elapsedTime;
    
@@ -175,7 +179,7 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
 
 const ShaderLayer = ({ mousePos, hovering, resolution }: ShaderLayerProps) => {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
-  const {renderTarget} = BufferPass({mousePos,hovering,resolution});
+  const {renderTarget} = BufferPass({mousePos,hovering,resolution:(resolution/2.0)});
   
   const myShader = {
     uniforms: {
@@ -309,9 +313,10 @@ export default function Wavecard() {
       onMouseUp={() => setHovering(false)}
       onMouseOut={() => setHovering(false)}
     >
-      <div className="herotext">
+      <div className="overlay"></div>
+      {/* <div className="herotext">
         <div>
-          Kolukku{" "}
+          Kolukku{" "}{zoomLevel}
           <span style={{height:"100%",maxWidth:"30%", width:"auto",minWidth:"10%"}}>
             <Mountainsvg />
           </span>
@@ -325,7 +330,7 @@ export default function Wavecard() {
           </span>
           Malai
         </div>
-      </div>
+      </div> */}
       <Canvas
         className="mountaincard-canvas"
         style={{
