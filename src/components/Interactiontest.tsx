@@ -46,7 +46,7 @@ export default function Interactiontest() {
       {/* <Mountaincard></Mountaincard> */}
       </div>
       <div className="component-description">
-        Keep the water clear ⚠️
+        Keep the water clear!
       </div>
       {/* <button onClick={()=>coin()}>Hi</button> */}
     </div>
