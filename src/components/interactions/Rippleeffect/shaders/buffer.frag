@@ -3,7 +3,7 @@
 //
 // https://www.shadertoy.com/view/4dK3Ww
 
-precision lowp float;
+precision mediump float;
 
 #define PI 3.14159265
 
@@ -47,7 +47,7 @@ void main()
     // vec3 stack= texture2D(uBufferA,vUv).xyz * vec3(0.99,.982,.93);
     float d = blob  ;
     d +=-(p11-.5)*2.+(p10 + p01 + p21 + p12 - 2.);
-    d *= 0.9;
+    d *= 0.94;
     d *= min(1.,float(uFrame));
     d = d*.5 + .5;
      gl_FragColor = vec4(d,c.x,0,0);

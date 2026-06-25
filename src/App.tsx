@@ -11,6 +11,7 @@ export default function App() {
   return (
     <>
       <ReactLenis options={{syncTouch:true}} root />
+      
       <Interactiontest/>
     </>
   );

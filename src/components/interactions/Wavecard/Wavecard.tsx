@@ -90,45 +90,47 @@ export default function Wavecard() {
   }, [zoomLevel]);
   
 
-  //
+  // Commented this code to understand how to properly implement onBeforeCompile for a react three shader material
   // onBeforeCompile for Transmission button
-  useEffect(() => {
-    if (!materialRef.current) return
+  // useEffect(() => {
+  //   if (!materialRef.current) return
 
-    const mat = materialRef.current
-    const originalOnBeforeCompile = mat.onBeforeCompile?.bind(mat)
+  //   const mat = materialRef.current
 
-    mat.onBeforeCompile = (shader, renderer) => {
-      // Call the original first — critical for MeshTransmissionMaterial
-      originalOnBeforeCompile(shader, renderer)
-      // Now inject your modifications
+  //   if (!mat) return
+  //   const originalOnBeforeCompile = mat.onBeforeCompile?.bind(mat)
+
+  //   mat.onBeforeCompile = (shader, renderer) => {
+  //     // Call the original first — critical for MeshTransmissionMaterial
+  //     originalOnBeforeCompile(shader, renderer)
+  //     // Now inject your modifications
       
-      if(mat.userData)
-      {
-      mat.userData.shader = shader;
-      }
-      shader.uniforms.uTime = { value: 0 }
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <color_pars_fragment>',
-        `
-          // your custom GLSL here
-          #include <color_pars_fragment>
-          uniform float uTime;
-        `
-      )
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <color_fragment>',
-        `
-          // your custom GLSL here
-          #include <color_fragment>
-          // diffuseColor.rgb = vec3(1,1,0);
-        `
-      )
-    }
+  //     if(mat.userData)
+  //     {
+  //     mat.userData.shader = shader;
+  //     }
+  //     shader.uniforms.uTime = { value: 0 }
+  //     shader.fragmentShader = shader.fragmentShader.replace(
+  //       '#include <color_pars_fragment>',
+  //       `
+  //         // your custom GLSL here
+  //         #include <color_pars_fragment>
+  //         uniform float uTime;
+  //       `
+  //     )
+  //     shader.fragmentShader = shader.fragmentShader.replace(
+  //       '#include <color_fragment>',
+  //       `
+  //         // your custom GLSL here
+  //         #include <color_fragment>
+  //         // diffuseColor.rgb = vec3(1,1,0);
+  //       `
+  //     )
+  //   }
 
-    // Force recompile
-    mat.needsUpdate = true
-  })
+  //   // Force recompile
+  //   mat.needsUpdate = true
+  // })
 
   // onBeforeCompile for Transmission button ends
 
@@ -202,14 +204,14 @@ export default function Wavecard() {
         ease: "sine.inOut",
       });
       if (materialRef.current.color) {
-        gsap.to(materialRef.current.color, {
-          r: 0.298,
-          g: 0.322,
-          b: 0.38,
-          duration: 0.4,
-          ease: "sine.inOut",
-        });
-      }
+      //   gsap.to(materialRef.current.color, {
+      //     r: 0.298,
+      //     g: 0.322,
+      //     b: 0.38,
+      //     duration: 0.4,
+      //     ease: "sine.inOut",
+      //   });
+      // }
     }
   };
   const buttonHoverOut = () => {
@@ -221,15 +223,18 @@ export default function Wavecard() {
         duration: 0.4,
         ease: "sine.inOut",
       });
-
+      
+      
+      // different implementation needed for colors
+      // const target = new THREE.Color("#9daac8")
       if (materialRef.current.color) {
-        gsap.to(materialRef.current.color, {
-          r: 0.522,
-          g: 0.565,
-          b: 0.663,
-          duration: 0.4,
-          ease: "sine.inOut",
-        });
+        // gsap.to(materialRef.current, {
+        //   r: target.r,
+        //   g: target.g,
+        //   b: target.b,
+        //   duration: 0.4,
+        //   ease: "sine.inOut",
+        // });
       }
     }
   };
