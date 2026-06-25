@@ -211,7 +211,7 @@ export default function Wavecard() {
       //     duration: 0.4,
       //     ease: "sine.inOut",
       //   });
-      // }
+      }
     }
   };
   const buttonHoverOut = () => {
