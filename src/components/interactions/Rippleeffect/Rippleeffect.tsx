@@ -17,8 +17,13 @@ import {
 } from "@react-three/drei";
 import backgroundImage from "./image.jpg";
 import { useGSAP } from "@gsap/react"; // <-- import the hook from our React package
+import displacementMap from './displacement.png';
 
-const SurfLogo = () => {
+type svgRes = {
+ resolution :number 
+}
+
+const SurfLogo = ({resolution}:svgRes) => {
   return (
     <svg
       width="300"
@@ -29,14 +34,49 @@ const SurfLogo = () => {
     >
       <g filter="url(#filter0_ii_276_85)">
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M213.631 0.00683594C261.435 0.612312 300 39.5526 300 87.5V212.5L299.993 213.631C299.388 261.435 260.447 300 212.5 300H87.5C39.1751 300 0 260.825 0 212.5V87.5C3.58158e-09 87.4463 0.000879769 87.3926 0.000976562 87.3389V78.125H0.498047C5.13689 34.5756 41.7231 0.572313 86.3691 0.00683594L87.5 0H212.5L213.631 0.00683594ZM25.001 203.125L25 212.5C25 247.018 52.9822 275 87.5 275H212.5C247.018 275 275 247.018 275 212.5V200.951H115.18C75.9845 200.951 55.0479 169.257 55.8359 139.21C56.1666 126.605 60.2283 113.797 68.4746 103.125H25.001C25.0008 125.616 25.001 144.964 25.001 203.125ZM87.5 25C56.1686 25 30.2226 48.0547 25.6992 78.125H125.444L125.445 103.125C108.956 103.125 98.1391 108.29 91.4258 114.851C87.547 118.641 84.7341 123.192 82.9824 128.125H187.499L187.5 153.125C171.182 153.125 160.46 158.362 153.765 165.076C150.608 168.242 148.148 171.937 146.388 175.951H275V87.5C275 52.9822 247.018 25 212.5 25H87.5ZM82.7236 153.125C86.9793 166.094 98.2224 175.951 115.18 175.951H120.069C122.097 167.866 125.713 160.047 131.056 153.125H82.7236Z"
-          fill="#b8dafd"
-          fill-opacity="0.60"
+          fill="#616e7d"
+          fillOpacity="0.4"
         />
       </g>
+
+      <mask id="my-clip">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M213.631 0.00683594C261.435 0.612312 300 39.5526 300 87.5V212.5L299.993 213.631C299.388 261.435 260.447 300 212.5 300H87.5C39.1751 300 0 260.825 0 212.5V87.5C3.58158e-09 87.4463 0.000879769 87.3926 0.000976562 87.3389V78.125H0.498047C5.13689 34.5756 41.7231 0.572313 86.3691 0.00683594L87.5 0H212.5L213.631 0.00683594ZM25.001 203.125L25 212.5C25 247.018 52.9822 275 87.5 275H212.5C247.018 275 275 247.018 275 212.5V200.951H115.18C75.9845 200.951 55.0479 169.257 55.8359 139.21C56.1666 126.605 60.2283 113.797 68.4746 103.125H25.001C25.0008 125.616 25.001 144.964 25.001 203.125ZM87.5 25C56.1686 25 30.2226 48.0547 25.6992 78.125H125.444L125.445 103.125C108.956 103.125 98.1391 108.29 91.4258 114.851C87.547 118.641 84.7341 123.192 82.9824 128.125H187.499L187.5 153.125C171.182 153.125 160.46 158.362 153.765 165.076C150.608 168.242 148.148 171.937 146.388 175.951H275V87.5C275 52.9822 247.018 25 212.5 25H87.5ZM82.7236 153.125C86.9793 166.094 98.2224 175.951 115.18 175.951H120.069C122.097 167.866 125.713 160.047 131.056 153.125H82.7236Z"
+          fill="#ffffff"
+        />
+      </mask>
+
       <defs>
+        {/* filter needs understanding */}
+        <filter id="glass_effect">
+          <feGaussianBlur
+            in="SourceGraphic"
+            stdDeviation="1"
+            result="blurred"
+          />
+          <feImage
+              href={displacementMap}
+              x="0"
+              y="0"
+              width={resolution*45/100}
+              height={resolution*45/100}
+              result="displacement_map"
+            />
+            <feDisplacementMap
+              in="blurred_source"
+              in2="displacement_map"
+              scale="55"
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="displaced"
+            />
+        </filter>
+
         <filter
           id="filter0_ii_276_85"
           x="-3.9"
@@ -44,9 +84,9 @@ const SurfLogo = () => {
           width="307.8"
           height="307.8"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -59,8 +99,8 @@ const SurfLogo = () => {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dx="-2" dy="-2" />
-          <feGaussianBlur stdDeviation="2" />
+          <feOffset dx="-1" dy="-1" />
+          <feGaussianBlur stdDeviation="1" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
@@ -77,8 +117,8 @@ const SurfLogo = () => {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dx="2" dy="2" />
-          <feGaussianBlur stdDeviation="0.5" />
+          <feOffset dx="1" dy="1" />
+          <feGaussianBlur stdDeviation="1" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
@@ -228,6 +268,7 @@ const ShaderLayer = ({ mousePos, hovering, resolution }: ShaderLayerProps) => {
 
 export default function Wavecard() {
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const backdropRef = useRef<HTMLDivElement | null>(null);
   const [mousePos, setMousePos] = useState(new THREE.Vector2(0.5, 0.5));
   const [hovering, setHovering] = useState(false);
   // const [buttonhover, setButtonhover] = useState(false);
@@ -318,7 +359,8 @@ export default function Wavecard() {
       onMouseOut={() => setHovering(false)}
     >
       <div className="herotext">
-        <SurfLogo />
+        <div ref={backdropRef} className="svg-backdrop"></div>
+        <SurfLogo resolution={zoomLevel} />
       </div>
       <div className="overlay">
         <div className="overlay-inner"></div>
@@ -333,6 +375,7 @@ export default function Wavecard() {
             top: "0",
             left: "0",
             background: "#fff",
+            // filter: "url(#glass_effect) brightness(150%)"
             // boxShadow: " inset 0 0 10px 10px rgb(255, 255, 255) ",
           }}
         >

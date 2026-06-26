@@ -103,7 +103,10 @@ void main()
     // Totally fake displacement and shading:
     vec3 grad = normalize(vec3(p21 - p01, p12 - p10, 1.0));
     // vec4 c = vec4(0.1,0.1,0.1,1.0);
-    vec4 c = texture2D(imageTexture, vUv + grad.xy*.35);
+    float imgR = texture2D(imageTexture, vUv + grad.xy*.33+0.001).r;
+    float imgG = texture2D(imageTexture, vUv + grad.xy*.36+0.002).g;
+    float imgB = texture2D(imageTexture, vUv + grad.xy*.40+0.003).b;
+    vec4 c = vec4(imgR,imgG,imgB,1.0);
     vec3 light = normalize(vec3(.2,-.5,.7));
     float diffuse = dot(grad,light);
     float spec = pow(max(0.,-reflect(light,grad).z),32.);
@@ -135,7 +138,7 @@ void main()
     // Background color
     col += (1.-v) * finalColor.rgb;
     //caustics code ends
-    
+   
     gl_FragColor = vec4(col,1.0);
 
 }
