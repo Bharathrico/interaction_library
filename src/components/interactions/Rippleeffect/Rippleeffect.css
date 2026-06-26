@@ -48,7 +48,7 @@
       mask-position: center;
       -webkit-mask-image: url("surflogo.png");
       -webkit-mask-size: cover;
-      backdrop-filter: blur(0.56px);
+      backdrop-filter: blur(1.5px);
       
     }
     svg {
