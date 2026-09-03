@@ -1,0 +1,19 @@
+.maincard
+{
+    max-width: 100%;
+    width: 100%;
+    font-size: inherit;
+    aspect-ratio: 1 / 1;
+    /* height: fit-content; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    position: relative;
+    padding: 10%;
+    /* background: url('Munnarcard_image.png'); */
+    /* background-size: cover; */
+    border-radius: 20%;
+    overflow: hidden;
+    background-color: antiquewhite;
+}

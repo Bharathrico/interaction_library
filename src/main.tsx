@@ -18,10 +18,10 @@ createRoot(document.getElementById("root")!).render(
         inset:"0",
         zIndex:"0",
         pointerEvents:"none",
-        filter:"url(#noise-bg-fx) grayscale(100%)",
-        opacity:"10%",
+        // filter:"url(#noise-bg-fx) grayscale(100%)",
+        // opacity:"10%",
         // mixBlendMode:"normal",
-        backgroundColor:"#000000"
+        // backgroundColor:"#000000"
       }}
       aria-hidden="true"
     >

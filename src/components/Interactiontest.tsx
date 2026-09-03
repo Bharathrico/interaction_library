@@ -1,7 +1,10 @@
 // import Mountaincard from "./interactions/Mountaincard/Mountaincard";
 // import Wavecard from "./interactions/Wavecard/Wavecard";
-import Rippleeffect from "./interactions/Rippleeffect/Rippleeffect"
+// import Rippleeffect from "./interactions/Rippleeffect/Rippleeffect"
+// import Zenstone from "./interactions/Zenstone/Zenstone"
 // import Liquideffect from "./interactions/Liquideffect/Liquideffect"
+// import Soundimage from "./interactions/soundimage/Soundimage";
+import features from './Libraryindex'
 import "./Interactiontest.css";
 
 // function coin() {
@@ -27,6 +30,8 @@ import "./Interactiontest.css";
 // }
 
 export default function Interactiontest() {
+  const feature = features["soundcomponent"];
+  const FeatureComponent = feature.component;
   return (
     <div className="Testwrapper">
       
@@ -41,8 +46,7 @@ export default function Interactiontest() {
         </div> 
       <div className="component-wrapper">
         {/* <Liquideffect/> */}
-        
-      <Rippleeffect />
+        <FeatureComponent/>
       {/* <Mountaincard></Mountaincard> */}
       </div>
       <div className="component-description">

@@ -13,9 +13,6 @@
   background-size: cover;
   border-radius: 20%;
   overflow: hidden;
-  box-shadow:
-    0 60px 100px -50px #0c0e1030,
-    0 60px 60px -50px #0c0e1041;
 
   .herotext {
     height: 35%;
