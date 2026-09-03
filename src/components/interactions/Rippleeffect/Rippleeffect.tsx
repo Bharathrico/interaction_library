@@ -2,6 +2,7 @@
 
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 // import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
+// import { useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import "./Rippleeffect.css";
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -203,7 +204,7 @@ function BufferPass({ mousePos, hovering, resolution }: ShaderLayerProps) {
     bufferMaterial.uniforms.hovering.value = hovering;
     bufferMaterial.uniforms.uTime.value = state.clock.elapsedTime;
 
-    console.log(frameCount.current);
+    // console.log(frameCount.current);
     bufferMaterial.uniforms.uFrame.value = frameCount.current;
 
     frameCount.current += 1.0;
@@ -346,6 +347,7 @@ export default function Wavecard() {
   };
 
   return (
+    
     <div
       ref={cardRef}
       id="ripplecard"
@@ -359,7 +361,10 @@ export default function Wavecard() {
       onMouseOut={() => setHovering(false)}
     >
       <div className="herotext">
-        <div ref={backdropRef} className="svg-backdrop"></div>
+        {/* {ready?"ready":"not ready"} */}
+        <div ref={backdropRef} className="svg-backdrop">
+          
+        </div>
         <SurfLogo resolution={zoomLevel} />
       </div>
       <div className="overlay">

@@ -2,36 +2,42 @@
 // import Wavecard from "./interactions/Wavecard/Wavecard";
 import Rippleeffect from "./interactions/Rippleeffect/Rippleeffect"
 // import Liquideffect from "./interactions/Liquideffect/Liquideffect"
+// import Icontest from "./interactions/Icontest/Icontest"
 import "./Interactiontest.css";
 
-// function coin() {
-//   const ctx = new AudioContext();
-//   const osc = ctx.createOscillator();
-//   const gain = ctx.createGain();
+import { useEffect, useState } from "react";
+import { useProgress } from "@react-three/drei";
 
-//   osc.connect(gain);
-//   gain.connect(ctx.destination);
+function useThreeSceneLoaded() {
+  const { active, progress, total } = useProgress();
+  const [started, setStarted] = useState(false);
+  const [waiting, setWaiting] = useState(false);
 
-//   osc.type = 'sawtooth';
-//   // Sweep frequency UP
-//   osc.frequency.setValueAtTime(523, ctx.currentTime);       // C5
-//   osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1); // E5
-//   osc.frequency.setValueAtTime(784, ctx.currentTime + 0.15); // G5
 
-//   gain.gain.setValueAtTime(0.05, ctx.currentTime);
-//   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+  useEffect(()=>{
+    setTimeout(()=>{setWaiting(true)},1000)
+  })
+  useEffect(() => {
+    if (total > 0) setStarted(true);
+  }, [total]);
 
-//   osc.start();
-//   osc.stop(ctx.currentTime + 0.3);
-//   navigator.vibrate([20]);
-// }
+  // Gotcha: before anything registers with the loading manager,
+  // active=false and progress=100 by default — that looks "done"
+  // even though nothing has loaded yet. Guard with `started`.
+  return waiting && (started ? !active && progress === 100 : false);
+}
 
 export default function Interactiontest() {
+  const sceneReady = useThreeSceneLoaded();
+
   return (
-    <div className="Testwrapper">
+    <>
+    {!sceneReady && <div className="spinner">Loading scene…</div>}
+    <div className="Testwrapper" style={{ visibility: sceneReady ? "visible" : "hidden" }}>
       
       <div className="component-titles">
         <div>
+           
             Widget Pool
           </div>
 
@@ -40,9 +46,9 @@ export default function Interactiontest() {
           </div>
         </div> 
       <div className="component-wrapper">
-        {/* <Liquideffect/> */}
+        <Rippleeffect/>
         
-      <Rippleeffect />
+      {/* <Icontest /> */}
       {/* <Mountaincard></Mountaincard> */}
       </div>
       <div className="component-description">
@@ -50,5 +56,6 @@ export default function Interactiontest() {
       </div>
       {/* <button onClick={()=>coin()}>Hi</button> */}
     </div>
+    </>
   );
 }
