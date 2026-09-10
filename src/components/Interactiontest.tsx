@@ -7,52 +7,141 @@
 import features from './Libraryindex'
 import "./Interactiontest.css";
 
-// function coin() {
-//   const ctx = new AudioContext();
-//   const osc = ctx.createOscillator();
-//   const gain = ctx.createGain();
+import gsap from "gsap";
 
-//   osc.connect(gain);
-//   gain.connect(ctx.destination);
+import { useEffect, useState } from "react";
+import { useProgress } from "@react-three/drei";
 
-//   osc.type = 'sawtooth';
-//   // Sweep frequency UP
-//   osc.frequency.setValueAtTime(523, ctx.currentTime);       // C5
-//   osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1); // E5
-//   osc.frequency.setValueAtTime(784, ctx.currentTime + 0.15); // G5
 
-//   gain.gain.setValueAtTime(0.05, ctx.currentTime);
-//   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
 
-//   osc.start();
-//   osc.stop(ctx.currentTime + 0.3);
-//   navigator.vibrate([20]);
-// }
 
-export default function Interactiontest() {
-  const feature = features["rippleeffect"];
+function useThreeSceneLoaded() {
+  const { active, progress, total } = useProgress();
+  const [started, setStarted] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setWaiting(true);
+    }, 0);
+  });
+  useEffect(() => {
+    if (total > 0) setStarted(true);
+  }, [total]);
+
+  // Gotcha: before anything registers with the loading manager,
+  // active=false and progress=100 by default — that looks "done"
+  // even though nothing has loaded yet. Guard with `started`.
+  return waiting && (started ? !active && progress === 100 : false);
+}
+
+function WidgetScreen() {
+  const sceneReady = useThreeSceneLoaded();
+const feature = features["rippleeffect"];
   const FeatureComponent = feature.component;
-  return (
-    <div className="Testwrapper">
-      
-      <div className="component-titles">
-        <div>
-            Widget Pool
-          </div>
+  useEffect(() => {
+    if (!sceneReady) return;
 
-          <div className="duration">
-          Summer '26
-          </div>
-        </div> 
+     gsap.fromTo(
+      ".Testwrapper",
+      { filter: "blur(12px)", opacity: 0 },
+      { filter: "blur(0px)", opacity: 1, duration: 1.5, ease: "ease.out" },
+    );
+    gsap.fromTo(
+      ".component-wrapper",
+      { filter: "blur(12px)", opacity: 0, scale:1.1},
+      { filter: "blur(0px)", opacity: 1,  scale:1, duration: 1.5, ease: "expo.out" },
+    );
+  }, [sceneReady]);
+
+  return (
+    <div
+      className="Testwrapper"
+      style={{
+        visibility: sceneReady ? "visible" : "hidden",
+        zIndex: "2",
+        transform: "translateZ(0)",
+        willChange: "transform",
+        WebkitBackfaceVisibility: "hidden",
+        MozBackfaceVisibility: "hidden",
+        WebkitTransform: "translate3d(0,0,0)",
+        MozTransform: "translate3d(0,0,0)",
+      }}
+    >
+      <div className="component-titles">
+        <div>Widget Pool</div>
+
+        <div className="duration">Summer '26</div>
+      </div>
       <div className="component-wrapper">
-        {/* <Liquideffect/> */}
         <FeatureComponent/>
-      {/* <Mountaincard></Mountaincard> */}
+
+        {/* <Icontest /> */}
+        {/* <Mountaincard></Mountaincard> */}
       </div>
-      <div className="component-description">
-        Keep the water clear!
-      </div>
+      <div className="component-description">Keep the water clear!</div>
       {/* <button onClick={()=>coin()}>Hi</button> */}
     </div>
+  );
+}
+
+export default function Interactiontest() {
+  const sceneReady = useThreeSceneLoaded();
+
+  useEffect(() => {
+    if (sceneReady) return;
+
+    gsap.fromTo(
+      ".spinner",
+      { filter: "blur(12px)", opacity: 0, scale: 1.02 },
+      {
+        filter: "blur(0px)",
+        opacity: 1,
+        scale: 1,
+        duration: 2,
+        ease: "expo.out",
+      },
+    );
+  }, [sceneReady]);
+
+  useEffect(() => {
+    if (!sceneReady) return;
+
+    gsap.fromTo(
+      ".spinner",
+      { filter: "blur(0px)", opacity: 1, scale: 1 },
+      {
+        filter: "blur(12px)",
+        opacity: 0,
+        scale: 1.02,
+        duration: 1,
+        ease: "expo.out",
+      },
+    );
+  }, [sceneReady]);
+
+  return (
+    <>
+      {/* <div
+        className="spinner"
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transform: "translateZ(0)",
+        willChange: "transform",
+        WebkitBackfaceVisibility: "hidden",
+        MozBackfaceVisibility: "hidden",
+        WebkitTransform: "translate3d(0,0,0)",
+        MozTransform: "translate3d(0,0,0)",
+        }}
+      >
+        Loading scene…
+      </div> */}
+      <WidgetScreen />
+    </>
   );
 }
