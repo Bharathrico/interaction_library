@@ -349,7 +349,7 @@ export default function Wavecard() {
     <div
       ref={cardRef}
       id="ripplecard"
-      className="maincard"
+      className="maincard-ripple"
       onMouseMove={mouseMove}
       onTouchStart={touchMove}
       onTouchMove={touchMove}
@@ -358,7 +358,7 @@ export default function Wavecard() {
       onMouseUp={() => setHovering(false)}
       onMouseOut={() => setHovering(false)}
     >
-      <div className="herotext">
+      <div className="herotext-surf">
         <div ref={backdropRef} className="svg-backdrop"></div>
         <SurfLogo resolution={zoomLevel} />
       </div>

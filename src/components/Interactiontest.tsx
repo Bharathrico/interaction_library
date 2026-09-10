@@ -30,7 +30,7 @@ import "./Interactiontest.css";
 // }
 
 export default function Interactiontest() {
-  const feature = features["soundcomponent"];
+  const feature = features["rippleeffect"];
   const FeatureComponent = feature.component;
   return (
     <div className="Testwrapper">

@@ -1,7 +1,7 @@
 import { Canvas, useLoader,useFrame} from "@react-three/fiber";
 import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
-import "./Mountaincard.css";
+import "./Wavesphere.css";
 import munnarimage from "./Munnarcard_image.png";
 import { useState, useRef} from "react";
 import VertexShader from './shaders/.vert?raw'
@@ -117,7 +117,7 @@ const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
 }
 
 
-export default function Mountaincard() {
+export default function Wavesphere() {
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [mousePos, setMousePos] = useState(new THREE.Vector2(0.5, 0.5));
