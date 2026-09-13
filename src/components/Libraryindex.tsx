@@ -55,7 +55,7 @@ const features: Record<string, FeatureItem> = {
   mountaincard: {
     name: "Advanced Setup",
     duration: "10 min",
-    component: Wavesphere,
+    component: Mountaincard,
     tagline: "Configure it your way",
   },
   zenstone: {
