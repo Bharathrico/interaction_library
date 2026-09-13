@@ -15,6 +15,7 @@
   padding: 10%;
   gap: 3rem;
   font-family: 'inter';
+ 
 }
 
 .component-titles
@@ -44,6 +45,7 @@
 
 
 .component-wrapper {
+  
   width: 100%;
   animation: componentanimation 0.7s cubic-bezier(.59,0,.25,.99);
 }

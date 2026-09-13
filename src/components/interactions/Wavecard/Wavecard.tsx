@@ -14,7 +14,9 @@ import {
   RoundedBox,
   OrthographicCamera,
   type MeshTransmissionMaterialProps,
+  
 } from "@react-three/drei";
+
 import gsap from "gsap"; // <-- import GSAP
 import { useGSAP } from "@gsap/react"; // <-- import the hook from our React package
 
@@ -74,6 +76,7 @@ export default function Wavecard() {
   //  const roughnessMap = useLoader(THREE.TextureLoader, scratchImage);
   useGSAP({});
   useEffect(() => {
+    console.log("in")
     if (zoomLevel == 0) {
       if (cardRef.current) {
         setZoomLevel(cardRef.current?.clientWidth);

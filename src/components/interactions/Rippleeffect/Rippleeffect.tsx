@@ -267,7 +267,7 @@ const ShaderLayer = ({ mousePos, hovering, resolution }: ShaderLayerProps) => {
   );
 };
 
-export default function Wavecard() {
+export default function Rippleeffect() {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
   const [mousePos, setMousePos] = useState(new THREE.Vector2(0.5, 0.5));

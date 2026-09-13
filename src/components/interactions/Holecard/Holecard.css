@@ -1,0 +1,67 @@
+.maincard {
+  max-width: 100%;
+  width: 100%;
+  font-size: inherit;
+  aspect-ratio: 1 / 1;
+  /* height: fit-content; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  position: relative;
+  padding: 8%;
+  background-size: cover;
+  border-radius: 20%;
+  overflow: hidden;
+  box-shadow: 0 0 1px 0 #111111;
+
+  .herotext {
+    /* background-color: #00000079; */
+    padding: 10%;
+    width: 87%;
+    z-index: 1;
+    font-family: "DM Sans", sans-serif;
+    font-size: 2em;
+    line-height: 100%;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+    text-shadow:
+      1px 1px 1px #ffffff79,
+      -1px -1px 1px #00000079;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    transition: 0.2s all ease;
+  }
+  .herotext:hover
+  {
+    text-shadow:
+      2px 2px 5px #ffffff79,
+      -2px -2px 5px #00000079;
+  }
+}
+
+img {
+  z-index: 0;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+
+.mountaincard-canvas
+{
+  max-width: 100%;
+  max-height: 100%;
+  canvas
+  {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}

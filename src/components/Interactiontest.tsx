@@ -20,6 +20,7 @@ function useThreeSceneLoaded() {
   const [started, setStarted] = useState(false);
   const [waiting, setWaiting] = useState(false);
 
+  console.log(active);
   useEffect(() => {
     setTimeout(() => {
       setWaiting(true);
@@ -27,6 +28,7 @@ function useThreeSceneLoaded() {
   });
   useEffect(() => {
     if (total > 0) setStarted(true);
+
   }, [total]);
 
   // Gotcha: before anything registers with the loading manager,
@@ -37,7 +39,7 @@ function useThreeSceneLoaded() {
 
 function WidgetScreen() {
   const sceneReady = useThreeSceneLoaded();
-const feature = features["rippleeffect"];
+const feature = features["holecard"];
   const FeatureComponent = feature.component;
   useEffect(() => {
     if (!sceneReady) return;
@@ -58,7 +60,8 @@ const feature = features["rippleeffect"];
     <div
       className="Testwrapper"
       style={{
-        visibility: sceneReady ? "visible" : "hidden",
+        // visibility: sceneReady ? "visible" : "hidden",
+
         zIndex: "2",
         transform: "translateZ(0)",
         willChange: "transform",
