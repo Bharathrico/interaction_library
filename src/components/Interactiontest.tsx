@@ -39,7 +39,7 @@ function useThreeSceneLoaded() {
 
 function WidgetScreen() {
   const sceneReady = useThreeSceneLoaded();
-const feature = features["holecard"];
+const feature = features["voiceblob"];
   const FeatureComponent = feature.component;
   useEffect(() => {
     if (!sceneReady) return;

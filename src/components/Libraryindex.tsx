@@ -11,6 +11,7 @@ import Icontest from "./interactions/Icontest/Icontest";
 import Wavecard from "./interactions/Wavecard/Wavecard";
 import Glasscard from "./interactions/Glasscard/Glasscard";
 import Holecard from "./interactions/Holecard/Holecard";
+import Voiceblob from "./interactions/Voiceblob/Voiceblob";
 
 
 export interface FeatureItem {
@@ -25,6 +26,12 @@ const features: Record<string, FeatureItem> = {
     name: "Onboarding",
     duration: "5 min",
     component: Holecard,
+    tagline: "Get started in minutes",
+  },
+  voiceblob: {
+    name: "Onboarding",
+    duration: "5 min",
+    component: Voiceblob,
     tagline: "Get started in minutes",
   },
   glasscard: {
