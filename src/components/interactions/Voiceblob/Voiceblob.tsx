@@ -4,7 +4,7 @@ import { Canvas, useFrame, useLoader} from "@react-three/fiber";
 import { EffectComposer, DotScreen, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import "./Voiceblob.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   OrthographicCamera,
 } from "@react-three/drei";
@@ -14,16 +14,91 @@ import munnarimage from "./Munnarcard_image.png";
 import VertexShader from './shaders/.vert?raw'
 import FragmentShader from './shaders/.frag?raw'
 
+
+interface UseVoiceActivityOptions {
+  threshold?: number;      // 0-1, volume level considered "talking"
+  smoothing?: number;      // 0-1, higher = smoother/slower response
+}
+
+function useVoiceActivity({ threshold = 0.8, smoothing = 0.1 }: UseVoiceActivityOptions = {}) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [volume, setVolume] = useState(0); // 0-1, current loudness
+  const [error, setError] = useState<string | null>(null);
+
+  const streamRef = useRef<MediaStream | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const start = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const audioCtx = new AudioContext();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = smoothing;
+      source.connect(analyser);
+
+      audioCtxRef.current = audioCtx;
+      analyserRef.current = analyser;
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+
+      const tick = () => {
+        analyser.getByteTimeDomainData(data);
+
+        // RMS (root mean square) of the waveform = loudness
+        let sumSquares = 0;
+        for (let i = 0; i < data.length; i++) {
+          const sample = (data[i] - 128) / 128; // normalize to -1..1
+          sumSquares += sample * sample;
+        }
+        const rms = Math.sqrt(sumSquares / data.length);
+
+        setVolume(rms);
+        setIsSpeaking(rms > threshold);
+
+        rafRef.current = requestAnimationFrame(tick);
+      };
+
+      tick();
+      setError(null);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }, [threshold, smoothing]);
+
+  const stop = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    streamRef.current?.getTracks().forEach(track => track.stop()); // releases the mic
+    audioCtxRef.current?.close();
+    streamRef.current = null;
+    audioCtxRef.current = null;
+    analyserRef.current = null;
+    setIsSpeaking(false);
+    setVolume(0);
+  }, []);
+
+  useEffect(() => stop, [stop]); // cleanup on unmount
+
+  return { isSpeaking, volume, error, start, stop };
+}
+
 // a plane with shader
 type ShaderLayerProps = {
   mousePos : THREE.Vector2,
+  audioLevel : number
 }
-const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
+const ShaderLayer = ({mousePos, audioLevel}:ShaderLayerProps) => {
 
   const myShader = {
   uniforms: {
     uTime : {value:0},
     mousePos: { value: new THREE.Vector2(0.5, 0.5) },
+    audioLevel:{value:0},
     imageTexture : {value: useLoader(THREE.TextureLoader, munnarimage)}
   },
   vertexShader: VertexShader,
@@ -34,6 +109,7 @@ const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
    useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.mousePos.value = mousePos;
+      materialRef.current.uniforms.audioLevel.value = audioLevel;
       materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     }
   });
@@ -49,6 +125,7 @@ const ShaderLayer = ({mousePos}:ShaderLayerProps) => {
 
 
 export default function Voiceblob() {
+  const { isSpeaking, volume, error, start, stop } = useVoiceActivity({ threshold: 0.08 });
   const cardRef = useRef<HTMLDivElement | null>(null);
   // const [buttonhover, setButtonhover] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(0);
@@ -114,6 +191,17 @@ export default function Voiceblob() {
   return (
     
     <div ref={cardRef} className="maincard" onMouseMove={mouseMove} onTouchMove={touchMove}>
+      <div style={{position:"absolute", zIndex:2, width:"100%", height:"100%"}}>
+      <button onClick={start}>Start listening</button>
+      <button onClick={stop}>Stop</button>
+      {error && <p>Error: {error}</p>}
+      <div style={{
+        width: 20, height: 20, borderRadius: '50%',
+        background: isSpeaking ? 'limegreen' : 'lightgray',
+        transition: 'background 0.1s',
+      }} />
+      <p>Volume: {(volume * 100).toFixed(0)}%</p>
+      </div>
       <Canvas
         className="mountaincard-canvas"
         style={{
@@ -151,7 +239,7 @@ export default function Voiceblob() {
         />
 
         <EffectComposer>
-            <ShaderLayer mousePos={mousePos}/>
+            <ShaderLayer mousePos={mousePos} audioLevel={volume}/>
           {/* <DotScreen scale={0.5} /> */}
           <Bloom />
         </EffectComposer>

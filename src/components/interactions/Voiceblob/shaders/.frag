@@ -40,6 +40,7 @@ varying float vDisplacement;
 uniform sampler2D imageTexture;
 uniform vec2 mousePos;
 uniform float uTime;
+uniform float audioLevel;
 
 
 
@@ -136,24 +137,28 @@ void main()
     // Center UV coords around (0,0), correct for aspect ratio
   vec2 uv = vUv - 0.5;
 
-  float distx = length(uv-vec2(0.1));
-  float disty = length(uv+vec2(0.1));
+  float distx = length(uv);
+  float disty = length(uv-vec2(0.1));
+  float distz = length(uv+vec2(0.2));
 
   // Smooth edge (anti-aliased) circle: 1.0 inside, 0.0 outside
-  float circleOne = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, distx);
-  float circleTwo = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, disty);
+  float circleOne = 1.0 - smoothstep(0.3 - 0.004, 0.3 + 0.004, distx);
+  float circleTwo = 1.0 - smoothstep(0.2- 0.1+(audioLevel*0.5), 0.2+ 0.1+(audioLevel*0.5), disty);
+  float circleThree = 1.0 - smoothstep(0.2- 0.3+(audioLevel*0.2), 0.2+ 0.3+(audioLevel*0.2), distz);
   
-  float circleMask = 1.0 - smoothstep(0.3 - 0.005, 0.3 + 0.005, length(uv));
+  float circleMask = 1.0 - smoothstep(0.2 - 0.005, 0.2 + 0.005, length(uv));
   
   vec3 background = vec3(1.0); // white background
   vec3 black = vec3(0.0);
-  vec3 red = vec3(1.,0.,0.);
-  vec3 blue = vec3(0.,0.,1.);
+  vec3 red = vec3(1.,0.463,0.082);
+  vec3 darkRed = vec3(0.875,0.047,0.047);
+  vec3 blue = vec3(1.,0.604,0.082);
 
      vec2 st = vUv * (5.0);//scale
     float n = snoise(st+uTime * 0.2) * 0.5 + 0.5; // remap from [-1,1] to [0,1]
-    vec3 circleOnePlane = mix(black, vec3(red), circleOne);
-    vec3 circleTwoPlane = mix(black, vec3(blue), circleTwo);
+    vec3 circleOnePlane = mix(black, red, circleOne);
+    vec3 circleTwoPlane = mix(black, blue, circleTwo);
+    vec3 circleThreePlane = mix(background, darkRed, circleThree);
 //   gl_FragColor = vec4(color, 1.0);
     
     //voronoi implementation
@@ -165,7 +170,7 @@ void main()
 
     // Option A: plain distance field (classic mottled/cell look)
     vec3 color = vec3(dist);
-    vec3 maskedCircle = mix(background,blendMultiply(blendScreen(circleOnePlane,circleTwoPlane),color),circleMask );
+    vec3 maskedCircle = mix(background,blendMultiply(blendScreen(circleOnePlane,circleTwoPlane),circleThreePlane),circleMask );
     gl_FragColor = vec4( maskedCircle,1.0);
 }
 
