@@ -142,7 +142,9 @@ void main()
   // Smooth edge (anti-aliased) circle: 1.0 inside, 0.0 outside
   float circleOne = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, distx);
   float circleTwo = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, disty);
-
+  
+  float circleMask = 1.0 - smoothstep(0.3 - 0.005, 0.3 + 0.005, length(uv));
+  
   vec3 background = vec3(1.0); // white background
   vec3 black = vec3(0.0);
   vec3 red = vec3(1.,0.,0.);
@@ -153,7 +155,7 @@ void main()
     vec3 circleOnePlane = mix(black, vec3(red), circleOne);
     vec3 circleTwoPlane = mix(black, vec3(blue), circleTwo);
 //   gl_FragColor = vec4(color, 1.0);
-
+    
     //voronoi implementation
     st = vUv * 8.0; // scale = number of cells across
 
@@ -163,6 +165,7 @@ void main()
 
     // Option A: plain distance field (classic mottled/cell look)
     vec3 color = vec3(dist);
-gl_FragColor = vec4(blendMultiply(blendScreen(circleOnePlane,circleTwoPlane),color), 1.0);
+    vec3 maskedCircle = mix(background,blendMultiply(blendScreen(circleOnePlane,circleTwoPlane),color),circleMask );
+    gl_FragColor = vec4( maskedCircle,1.0);
 }
 
