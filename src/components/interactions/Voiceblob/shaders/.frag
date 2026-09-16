@@ -43,6 +43,14 @@ uniform float uTime;
 
 
 
+vec3 blendScreen(vec3 base, vec3 blend) {
+    return 1.0 - (1.0 - base) * (1.0 - blend);
+}
+
+vec3 blendMultiply(vec3 base, vec3 blend) {
+    return base * blend;
+}
+
 // Simplex 2D noise — Ashima Arts / Stefan Gustavson
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 
@@ -73,6 +81,49 @@ float snoise(vec2 v){
 
 
 
+
+// 2D hash function - returns a pseudo-random 2D vector per cell
+vec2 hash2(vec2 p) {
+    p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+    return fract(sin(p) * 43758.5453123);
+}
+
+// Basic Voronoi: returns distance to nearest feature point,
+// plus a per-cell id (useful for coloring each cell differently)
+vec2 voronoi(vec2 st) {
+    vec2 i_st = floor(st);
+    vec2 f_st = fract(st);
+
+    float minDist = 8.0;
+    vec2 minPoint;
+    vec2 cellId;
+
+    // Check the 3x3 neighborhood of cells around this pixel
+    for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+            vec2 neighbor = vec2(float(x), float(y));
+
+            // Random point inside this neighboring cell
+            vec2 point = hash2(i_st + neighbor);
+
+            // Animate the points if you want movement (optional):
+            // point = 0.5 + 0.5 * sin(uTime + 6.2831 * point);
+
+            vec2 diff = neighbor + point - f_st;
+            float dist = length(diff);
+
+            if (dist < minDist) {
+                minDist = dist;
+                minPoint = point;
+                cellId = i_st + neighbor;
+            }
+        }
+    }
+
+    return vec2(minDist, hash2(cellId).x); // distance, pseudo-random cell id
+}
+
+
 void main()
 {   
     // ColorStop[3] colors = ColorStop[](
@@ -85,20 +136,33 @@ void main()
     // Center UV coords around (0,0), correct for aspect ratio
   vec2 uv = vUv - 0.5;
 
-  float dist = length(uv);
+  float distx = length(uv-vec2(0.1));
+  float disty = length(uv+vec2(0.1));
 
   // Smooth edge (anti-aliased) circle: 1.0 inside, 0.0 outside
-  float circle = 1.0 - smoothstep(0.2 - 0.004, 0.2 + 0.005, dist);
+  float circleOne = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, distx);
+  float circleTwo = 1.0 - smoothstep(0.2 - 0.7, 0.2 + 0.7, disty);
 
   vec3 background = vec3(1.0); // white background
   vec3 black = vec3(0.0);
+  vec3 red = vec3(1.,0.,0.);
+  vec3 blue = vec3(0.,0.,1.);
 
-  
-
-     vec2 st = vUv * (5.0);
+     vec2 st = vUv * (5.0);//scale
     float n = snoise(st+uTime * 0.2) * 0.5 + 0.5; // remap from [-1,1] to [0,1]
-    vec3 color = mix(background, vec3(n), circle);
+    vec3 circleOnePlane = mix(black, vec3(red), circleOne);
+    vec3 circleTwoPlane = mix(black, vec3(blue), circleTwo);
 //   gl_FragColor = vec4(color, 1.0);
-gl_FragColor = vec4(color, 1.0);
+
+    //voronoi implementation
+    st = vUv * 8.0; // scale = number of cells across
+
+    vec2 result = voronoi(vec2(n)+uTime*0.2);
+    float dist = result.x;
+    float cellId = result.y;
+
+    // Option A: plain distance field (classic mottled/cell look)
+    vec3 color = vec3(dist);
+gl_FragColor = vec4(blendMultiply(blendScreen(circleOnePlane,circleTwoPlane),color), 1.0);
 }
 
